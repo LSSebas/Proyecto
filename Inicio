@@ -1,1 +1,33 @@
+#Run-Length Encoding (RLE)
+#Codificador
+def algoritmoRLE(textUsuario):
+    codigo = ''  # Inicializa una cadena vacía para almacenar el texto codificado
+    i = 0  # Inicia un contador en 0
 
+    while i < len(textUsuario):  # Itera sobre el texto
+        count = 1  # Inicializa una variable para contar las repeticiones
+        while i + 1 < len(textUsuario) and textUsuario[i] == textUsuario[i+1]:  # Mientras el carácter actual sea igual al siguiente
+            i += 1  # Incrementa el índice y cuenta las repeticiones
+            count += 1
+        codigo += str(count) + textUsuario[i]  # Agrega al texto codificado el número de repeticiones seguido del carácter
+        i += 1  # Incrementa el índice para pasar al siguiente carácter
+    return codigo  # Retorna el texto codificado
+
+# Decodificador
+def decodificarRLE(solu):
+    texto = ""  # Inicializa una cadena vacía para almacenar el texto decodificado
+
+    for i in range(0, len(solu), 2):  # Itera sobre el texto codificado de 2 en 2 (repeticiones, carácter)
+        count = int(solu[i])  # Obtiene el número de repeticiones
+        char = solu[i + 1]  # Obtiene el carácter
+        texto += char * count  # Agrega al texto decodificado el carácter repetido según el número de repeticiones
+    return texto  # Retorna el texto decodificado
+
+def iniciador():
+    textUsuario=str(input("Escriba una palabra " ))
+    solu = algoritmoRLE(textUsuario)
+    print( solu )
+    antisolu = decodificarRLE(solu)
+    print( antisolu)
+
+iniciador()
