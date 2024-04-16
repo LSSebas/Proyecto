@@ -1,1 +1,23 @@
-def sucesion
+def algoritmoLZW(pCadena):
+    dictionary_size = 256
+    dictionary = {chr(i): i for i in range(dictionary_size)}
+    salida = []
+    indice = 0
+    secuenciaActual = ""
+    while(indice < len(pCadena)):
+        caracter = pCadena[indice]
+        secuenciaExtendida = secuenciaActual + caracter
+        if(secuenciaExtendida in dictionary):
+            secuenciaActual = secuenciaExtendida
+        else:
+            
+            salida.append(dictionary[secuenciaActual])
+            dictionary[secuenciaExtendida] = dictionary_size
+            dictionary_size += 1
+            # Reiniciar w con el carácter c actual
+            secuenciaActual = caracter
+        indice = indice + 1
+    salida.append(dictionary[secuenciaActual])
+    return salida
+    
+print(algoritmoLZW(" "))
