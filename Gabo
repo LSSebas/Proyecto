@@ -1,23 +1,44 @@
 def algoritmoLZW(pCadena):
-    dictionary_size = 256
-    dictionary = {chr(i): i for i in range(dictionary_size)}
+    tamanoDiccionario = 256
+    diccionario = {chr(a): a for a in range(tamanoDiccionario)}
     salida = []
     indice = 0
     secuenciaActual = ""
     while(indice < len(pCadena)):
         caracter = pCadena[indice]
         secuenciaExtendida = secuenciaActual + caracter
-        if(secuenciaExtendida in dictionary):
+        if(secuenciaExtendida in diccionario):
             secuenciaActual = secuenciaExtendida
         else:
             
-            salida.append(dictionary[secuenciaActual])
-            dictionary[secuenciaExtendida] = dictionary_size
-            dictionary_size += 1
-            # Reiniciar w con el carácter c actual
+            salida.append(diccionario[secuenciaActual])
+            diccionario[secuenciaExtendida] = tamanoDiccionario
+            tamanoDiccionario += 1
             secuenciaActual = caracter
         indice = indice + 1
-    salida.append(dictionary[secuenciaActual])
+    salida.append(diccionario[secuenciaActual])
     return salida
     
-print(algoritmoLZW(" "))
+
+def descompresionAlgoritmoLZW(pComprimido):
+    tamanoDiccionario = 256
+    diccionario = {a: chr(a) for a in range(tamanoDiccionario)}
+    secuenciaPrevia = chr(pComprimido.pop(0))
+    cadenaRespuesta = []
+    cadenaRespuesta.append(secuenciaPrevia)
+
+    for elemento in pComprimido:
+        secuencia = ""
+        if(elemento in diccionario):
+            secuencia = diccionario[elemento]
+        elif(elemento == tamanoDiccionario):
+            secuencia = secuenciaPrevia + secuenciaPrevia[0]
+
+        cadenaRespuesta.append(secuencia)
+
+        diccionario[tamanoDiccionario] = secuenciaPrevia + secuencia[0]
+        tamanoDiccionario = tamanoDiccionario + 1
+
+        secuenciaPrevia = secuencia
+    
+    return "".join(cadenaRespuesta)
