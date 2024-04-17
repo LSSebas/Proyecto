@@ -42,3 +42,8 @@ def descompresionAlgoritmoLZW(pComprimido):
         secuenciaPrevia = secuencia
     
     return "".join(cadenaRespuesta)
+
+´´´
+Funciones utilizadas para este codigo de compresion/descompresion son: append/pop/chr/len/join
+´´´
+
