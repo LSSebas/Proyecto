@@ -1,1 +1,38 @@
-print ("Hola mundo")
+"""Comprime un texto utilizando el algoritmo de compresión por diccionario simple."""
+
+  # Paso 1: Inicialización del diccionario
+  diccionario = {chr(i): i for i in range(ord('a'), ord('z') + 1)}
+  diccionario[' '] = len(diccionario)
+
+  # Paso 2: Escanear y codificar la secuencia de entrada
+  texto_codificado = []
+  i = 0
+  while i < len(texto):
+    # Buscar la secuencia más larga en el diccionario
+    secuencia_maxima = ""
+    for j in range(i, len(texto)):
+      if texto[j] not in diccionario:
+        break
+      secuencia_maxima += texto[j]
+
+    # Si se encuentra una coincidencia, reemplazar con el índice
+    if secuencia_maxima in diccionario:
+      texto_codificado.append((diccionario[secuencia_maxima], len(secuencia_maxima)))
+      i += len(secuencia_maxima)
+    # Si no, agregar al diccionario y emitir el caracter
+    else:
+      texto_codificado.append((texto[i], 1))
+      diccionario[secuencia_maxima] = len(diccionario)
+      i += 1
+
+  return texto_codificado, diccionario
+
+# Paso 3: Guardar el diccionario y el texto codificado
+# (No se implementa en este código)
+
+# Ejemplo de uso
+texto = "abracadabra abracadabra abracadabra"
+texto_codificado, diccionario = comprimir_diccionario(texto)
+print("Texto codificado:", texto_codificado)
+print("Diccionario:", diccionario)
+
