@@ -1,3 +1,5 @@
+import os
+
 # Codificador RLE
 def algoritmoRLE(texto):
     codigo = ''  
@@ -38,27 +40,33 @@ def decodificarArchivo(ruta_entrada, ruta_salida):
         with open(ruta_salida, 'w') as archivo_salida:
             archivo_salida.write(texto_decodificado)
 
-# Función para codificar un archivo
-def codificar():
-    ruta_entrada = input("Ingrese la ruta del archivo a codificar: ")
-    ruta_salida = input("Ingrese la ruta del archivo de salida para el código RLE: ")
-    codificarArchivo(ruta_entrada, ruta_salida)
-    print("Archivo codificado correctamente.")
+# Función para codificar todos los archivos en un directorio
+def codificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        ruta_entrada = os.path.join(directorio_entrada, archivo)
+        ruta_salida = os.path.join(directorio_salida, archivo + ".pet")
+        codificarArchivo(ruta_entrada, ruta_salida)
 
-# Función para decodificar un archivo
-def decodificar():
-    ruta_entrada = input("Ingrese la ruta del archivo a decodificar: ")
-    ruta_salida = input("Ingrese la ruta del archivo de salida para el texto decodificado: ")
-    decodificarArchivo(ruta_entrada, ruta_salida)
-    print("Archivo decodificado correctamente.")
+# Función para decodificar todos los archivos en un directorio
+def decodificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        if archivo.endswith(".rle"):
+            ruta_entrada = os.path.join(directorio_entrada, archivo)
+            nombre_salida = archivo[:-4]  # Eliminar la extensión .rle
+            ruta_salida = os.path.join(directorio_salida, nombre_salida)
+            decodificarArchivo(ruta_entrada, ruta_salida)
 
 # Función principal
 def iniciador():
-    opcion = input("¿Desea codificar (C) o decodificar (D) un archivo? ").upper()
+    opcion = input("¿Desea codificar (C) o decodificar (D) un directorio? ").upper()
     if opcion == 'C':
-        codificar()
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos codificados: ")
+        codificarDirectorio(directorio_entrada, directorio_salida)
     elif opcion == 'D':
-        decodificar()
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos decodificados: ")
+        decodificarDirectorio(directorio_entrada, directorio_salida)
     else:
         print("Opción no válida.")
 
