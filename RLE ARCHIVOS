@@ -1,0 +1,66 @@
+# Codificador RLE
+def algoritmoRLE(texto):
+    codigo = ''  
+    i = 0  
+
+    while i < len(texto):  
+        count = 1  
+        while i + 1 < len(texto) and texto[i] == texto[i+1]:  
+            i += 1  
+            count += 1
+        codigo += str(count) + texto[i]  
+        i += 1  
+    return codigo  
+
+# Decodificador RLE
+def decodificarRLE(solu):
+    texto = ""  
+
+    for i in range(0, len(solu), 2):  
+        count = int(solu[i])  
+        char = solu[i + 1]  
+        texto += char * count  
+    return texto  
+
+# Función para codificar un archivo
+def codificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        solucion = algoritmoRLE(contenido)
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(solucion)
+
+# Función para decodificar un archivo
+def decodificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        texto_decodificado = decodificarRLE(contenido)
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(texto_decodificado)
+
+# Función para codificar un archivo
+def codificar():
+    ruta_entrada = input("Ingrese la ruta del archivo a codificar: ")
+    ruta_salida = input("Ingrese la ruta del archivo de salida para el código RLE: ")
+    codificarArchivo(ruta_entrada, ruta_salida)
+    print("Archivo codificado correctamente.")
+
+# Función para decodificar un archivo
+def decodificar():
+    ruta_entrada = input("Ingrese la ruta del archivo a decodificar: ")
+    ruta_salida = input("Ingrese la ruta del archivo de salida para el texto decodificado: ")
+    decodificarArchivo(ruta_entrada, ruta_salida)
+    print("Archivo decodificado correctamente.")
+
+# Función principal
+def iniciador():
+    opcion = input("¿Desea codificar (C) o decodificar (D) un archivo? ").upper()
+    if opcion == 'C':
+        codificar()
+    elif opcion == 'D':
+        decodificar()
+    else:
+        print("Opción no válida.")
+
+# Llamada a la función principal
+iniciador()
