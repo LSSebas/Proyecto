@@ -50,9 +50,9 @@ def codificarDirectorio(directorio_entrada, directorio_salida):
 # Función para decodificar todos los archivos en un directorio
 def decodificarDirectorio(directorio_entrada, directorio_salida):
     for archivo in os.listdir(directorio_entrada):
-        if archivo.endswith(".rle"):
+        if archivo.endswith(".pet"):
             ruta_entrada = os.path.join(directorio_entrada, archivo)
-            nombre_salida = archivo[:-4]  # Eliminar la extensión .rle
+            nombre_salida = archivo[:-4]  # Eliminar la extensión .pet
             ruta_salida = os.path.join(directorio_salida, nombre_salida)
             decodificarArchivo(ruta_entrada, ruta_salida)
 
