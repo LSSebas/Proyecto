@@ -1,0 +1,277 @@
+import os
+
+import re
+
+
+# Inicio Codificación densa post etiquetado
+# Se desarrollan diferentes funciones según el paso a paso explicado en el documento
+def identificarSecuenciasRepetidas(textoEntrada):
+    """
+    Identifica las palabras únicas y repetidas en el texto.
+
+    Args:
+        text (str): Texto de entrada.
+
+    Returns:
+        list: Lista de palabras repetidas.
+    """
+    # Dividir el texto en palabras y caracteres de puntuación usando expresiones regulares
+    # re.findall busca todas las coincidencias en una cadena y las devuelve en una lista
+    # r"\w+|\W" patron de busqueda propio de findall ((\w+ busca secuencias de alfanumericos) (| indica o) (W busca carcateres no alfanumericos individuales))
+    # r indica que la cadena va a ser tratada como una cadena raw (trabajo con epresiones regulares)
+    palabras = re.findall(r"\w+|\W", textoEntrada)
+
+    # Identificar palabras únicas y repetidas
+    palabrasUnicas = set()  # Conjunto para almacenar palabras únicas (set() almacena en un cunjunto una lista de no repetidos)
+    palabrasRepetidas = []  # Lista para almacenar palabras repetidas
+
+    for palabra in palabras:
+        if(palabra.strip() and palabra.isalpha() != ""):
+            # Verificar si la palabras es alfanumérico y no está vacío después de eliminar espacios en blanco
+            if(palabra in palabrasUnicas):
+                # Si la palabra ya está en palabras unicas, significa que es repetida
+                if(palabra not in palabrasRepetidas):
+                    # Si la palabra repetida no está en la lista de palabras repetidas, añádela
+                    palabrasRepetidas.append(palabra)
+            else:
+                # Si la palabra no está en palabras unicas, añádela al conjunto palabras unicas
+                palabrasUnicas.add(palabra)
+
+    return palabrasRepetidas
+
+
+def construirDiccionarioInicial(palabrasRepetidas):
+    """
+    Construye un diccionario inicial asignando códigos numéricos a las palabras repetidas.
+
+    Entradas:
+         palabrasRepetidas(list): Lista de palabras repetidas.
+
+    Salidas:
+        dict: Diccionario con las palabras repetidas y sus códigos asociados.
+    """
+    diccionario = {}
+    codigo = 1  # Inicializar los códigos en 1
+
+    # Iterar sobre cada palabra repetida para asignar códigos numéricos
+    for palabra in palabrasRepetidas:
+        diccionario[palabra] = (codigo)
+        # Asignar el código actual a la palabra en el diccionario
+        codigo = codigo + 1  # Incrementar el código para la próxima palabra repetida
+
+    return diccionario
+
+
+def aplicarDiccionario(textoEntrada, diccionario):
+    """
+    Aplica codificación densa al texto de entrada según un diccionario dado.
+
+    Entradas:
+        text (str): Texto de entrada.
+        dictionary (dict): Diccionario de palabras y códigos.
+
+    Salidas:
+        str: Texto codificado densamente.
+    """
+    # Obtener una lista de palabras y caracteres de puntuación del texto
+    palabras = re.findall(r"\w+|\W", textoEntrada)
+
+    # Inicializar una lista vacía para almacenar el texto codificado
+    contenido = []
+
+    # Iterar sobre cada token en la lista de tokens
+    for palabra in palabras:
+        # Verificar si el token es una palabra válida (sin espacios y solo letras)
+        if(palabra.strip() and palabra.isalpha()):
+            # Reemplazar la palabra por su código si está presente en el diccionario
+            if(palabra in diccionario):
+                contenido.append(str(diccionario[palabra])) 
+                 # Agregar el código al texto codificado y convertir en su reprentación de str
+            else:
+                contenido.append(palabra)  # Mantener la palabra original si no está en el diccionario
+        else:
+            contenido.append(palabra)  # Mantener caracteres de puntuación y espacios sin cambios en el texto codificado
+
+    # Unir la lista de tokens codificados en una cadena usando espacios como separadores
+    return " ".join(contenido)  # Devolver el texto codificado como una cadena
+
+
+def aplicarPostEtiquetado(textoEntrada, diccionario):
+    """
+    Aplica post-etiquetado al texto de entrada para actualizar un diccionario dado.
+
+    Args:
+        input_text (str): Texto de entrada.
+        dictionary (dict): Diccionario a actualizar.
+
+    Returns:
+        tuple: Tupla conteniendo el diccionario actualizado y los códigos en orden de aparición.
+    """
+    # Obtener todos los elementos del texto de entrada respetando la distinción entre mayúsculas y minúsculas
+    elementos = re.findall(r"\w+|\W", textoEntrada)
+
+    # Filtrar elementos que no están en el diccionario y actualizar el diccionario manteniendo el orden de aparición
+    # La siguiente linea toma la lista de valores en el diccionario, busca el maximo. Si está vacío se establece en 0 y se agrega un proximo codigo(busca que sea único)
+    codigo = (max(diccionario.values(), default=0) + 1)  # Obtener el próximo código disponible 
+    for elemento in elementos:
+        if(elemento.strip() and elemento not in diccionario):
+            # Asignar el próximo código disponible al elemento y luego incrementar el contador
+            diccionario[elemento] = codigo
+            codigo += 1
+
+    # Crear una lista de códigos en el orden de aparición en el texto original
+    codigoOrdenado = [diccionario[elemento] for elemento in elementos if elemento.strip() and elemento in diccionario]
+
+    return diccionario, codigoOrdenado
+
+
+def aplicarEtiquetas(contenido, diccionario):
+    """
+    Formatea el diccionario como una cadena dentro de etiquetas <dic>...</dic>.
+
+    Args:
+        input_text (str): Texto de entrada.
+        dictionary (dict): Diccionario a formatear.
+
+    Returns:
+        str: Cadena XML representando el diccionario.
+    """
+    # Obtener todos los elementos del texto de entrada respetando la distinción entre mayúsculas y minúsculas
+    elementos = re.findall(r"\w+|\W", contenido)
+
+    # Filtrar tokens que están en el diccionario y mantener el orden de aparición
+    elementosOrdenados = [elemento for elemento in elementos if elemento.strip() and elemento in diccionario]
+
+    # Crear una lista de pares clave:valor en el formato "clave:valor" siguiendo el orden de aparición
+    pares = [f"{clave}:{diccionario[clave]}" for clave in elementosOrdenados]
+
+    # Unir los elementos de la lista en una cadena y agregar las etiquetas <dic>...</dic>
+    return f"<dic>{"".join(pares)}</dic>"
+
+
+def comprimirTextoPostEtiquetado(contenido):
+    """
+    Comprime texto usando el algoritmo de codificación densa post-etiquetado.
+
+    Args:
+        text (str): Texto a comprimir.
+
+    Returns:
+        str: Resultado de la compresión.
+    """
+    textoEntrada = contenido
+    palabrasRepetidas = identificarSecuenciasRepetidas(textoEntrada)
+    if palabrasRepetidas:
+        print(f"Se identifican varias palabras repetidas: {', '.join(palabrasRepetidas)}")
+
+        # Construir el diccionario inicial
+        diccionarioIncial = construirDiccionarioInicial(palabrasRepetidas)
+        print("Diccionario inicial:")
+        print(diccionarioIncial)
+
+        # Aplicar codificación densa al texto de entrada
+        contenido = aplicarDiccionario(textoEntrada, diccionarioIncial)
+        print("Texto codificado densamente:")
+        print(contenido)
+
+        # Aplicar post-etiquetado al texto de entrada
+        diccionarioActualizado, codigoEnOrden = aplicarPostEtiquetado(textoEntrada, diccionarioIncial)
+
+        # Formatear el diccionario como una cadena dentro de etiquetas <dic>...</dic>
+        diccionarioConEtiquetas = aplicarEtiquetas(textoEntrada, diccionarioActualizado)
+        print("Diccionario actualizado con post-etiquetado:")
+        print(diccionarioConEtiquetas)
+
+        # Imprimir los códigos en el orden de aparición en el texto original
+        # La n indica un salto de linea 
+        print("\nCódigos en el orden de aparición en el texto original:")
+        print(codigoEnOrden)
+
+        # Con este codigo se enviar tanto el diccionario como el orden de los codigos pero
+        # debido al requisito solamente se va a devolver el diccionario y el orden solamente sería para pruebas
+        # en caso de requerir: result = f"{dictionary_xml}\n{ordered_codes}"  # Concatenar con salto de línea
+
+        # Este es el codigo que va a guardar solo el diccionario
+        resultado = diccionarioConEtiquetas
+        return resultado
+    else:
+        print("No se encontraron palabras repetidas en el texto.")
+
+def descompresionDensaPostEtiquetado(contenido):
+    """
+    Extrae las palabras del contenido XML en el formato <dic>...</dic> y devuelve un texto descomprimido en el orden correcto.
+
+    Args:
+        xml_content (str): Contenido XML que contiene las palabras y códigos.
+
+    Returns:
+        str: Texto descomprimido con las palabras en el orden original.
+    """
+    # Utilizar una expresión regular para encontrar las palabras y códigos dentro del contenido XML
+    patron = r"(\w+|\W+):(\d+)"
+    coincidencias = re.findall(patron, contenido)
+
+    # Diccionario para mapear códigos a palabras
+    codigoPalabras = {}
+    # Lista para almacenar las palabras en el orden original
+    palabarasEnOrden = []
+
+    # Construir un diccionario de palabras y códigos
+    for palabra, code in coincidencias:
+        # Convertir el código a un entero
+        code = int(code)
+        # Agregar la palabra al diccionario si no existe
+        if code not in codigoPalabras:
+            palabarasEnOrden.append(palabra)
+
+    # Devolver el texto descomprimido como una cadena
+    return " ".join(palabarasEnOrden)
+
+# Función para codificar un archivo
+def codificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        solucion = comprimirTextoPostEtiquetado(contenido)
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(solucion)
+
+# Función para decodificar un archivo
+def decodificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        texto_decodificado = descompresionDensaPostEtiquetado(contenido)
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(texto_decodificado)
+
+# Función para codificar todos los archivos en un directorio
+def codificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        ruta_entrada = os.path.join(directorio_entrada, archivo)
+        ruta_salida = os.path.join(directorio_salida, archivo + ".pet")
+        codificarArchivo(ruta_entrada, ruta_salida)
+
+# Función para decodificar todos los archivos en un directorio
+def decodificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        if archivo.endswith(".pet"):
+            ruta_entrada = os.path.join(directorio_entrada, archivo)
+            nombre_salida = archivo[:-4]  # Eliminar la extensión .pet
+            ruta_salida = os.path.join(directorio_salida, nombre_salida)
+            decodificarArchivo(ruta_entrada, ruta_salida)
+
+# Función principal
+def iniciador():
+    opcion = input("¿Desea codificar (C) o decodificar (D) un directorio? ").upper()
+    if opcion == 'C':
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos codificados: ")
+        codificarDirectorio(directorio_entrada, directorio_salida)
+    elif opcion == 'D':
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos decodificados: ")
+        decodificarDirectorio(directorio_entrada, directorio_salida)
+    else:
+        print("Opción no válida.")
+
+# Llamada a la función principal
+iniciador()
