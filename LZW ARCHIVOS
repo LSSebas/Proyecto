@@ -1,0 +1,99 @@
+import os
+def algoritmoLZW(contenido):
+    tamanoDiccionario = 256
+    diccionario = {chr(a): a for a in range(tamanoDiccionario)}
+    salida = []
+    indice = 0
+    secuenciaActual = ""
+    while(indice < len(contenido)):
+        caracter = contenido[indice]
+        secuenciaExtendida = secuenciaActual + caracter
+        if(secuenciaExtendida in diccionario):
+            secuenciaActual = secuenciaExtendida
+        else:
+            
+            salida.append(diccionario[secuenciaActual])
+            diccionario[secuenciaExtendida] = tamanoDiccionario
+            tamanoDiccionario += 1
+            secuenciaActual = caracter
+        indice = indice + 1
+    salida.append(diccionario[secuenciaActual])
+    return salida
+    
+
+def descompresionAlgoritmoLZW(contenido):
+    tamanoDiccionario = 256
+    diccionario = {a: chr(a) for a in range(tamanoDiccionario)}
+    secuenciaPrevia = chr(contenido.pop(0))
+    cadenaRespuesta = []
+    cadenaRespuesta.append(secuenciaPrevia)
+
+    for elemento in contenido:
+        secuencia = ""
+        if(elemento in diccionario):
+            secuencia = diccionario[elemento]
+        elif(elemento == tamanoDiccionario):
+            secuencia = secuenciaPrevia + secuenciaPrevia[0]
+
+        cadenaRespuesta.append(secuencia)
+
+        diccionario[tamanoDiccionario] = secuenciaPrevia + secuencia[0]
+        tamanoDiccionario = tamanoDiccionario + 1
+
+        secuenciaPrevia = secuencia
+    
+    return "".join(cadenaRespuesta)
+
+
+# Función para codificar un archivo
+def codificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        solucion = algoritmoLZW(contenido)
+        # Convertir la lista de códigos LZW a una cadena de texto
+        solucion_str = ' '.join(map(str, solucion))
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(solucion_str)
+
+# Función para decodificar un archivo
+def decodificarArchivo(ruta_entrada, ruta_salida):
+    with open(ruta_entrada, 'r') as archivo_entrada:
+        contenido = archivo_entrada.read()
+        # Convertir la cadena de texto en una lista de códigos LZW
+        contenido_lista = list(map(int, contenido.split()))
+        texto_decodificado = descompresionAlgoritmoLZW(contenido_lista)
+        with open(ruta_salida, 'w') as archivo_salida:
+            archivo_salida.write(texto_decodificado)
+
+# Función para codificar todos los archivos en un directorio
+def codificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        ruta_entrada = os.path.join(directorio_entrada, archivo)
+        ruta_salida = os.path.join(directorio_salida, archivo + ".pet")
+        codificarArchivo(ruta_entrada, ruta_salida)
+
+# Función para decodificar todos los archivos en un directorio
+def decodificarDirectorio(directorio_entrada, directorio_salida):
+    for archivo in os.listdir(directorio_entrada):
+        if archivo.endswith(".pet"):
+            ruta_entrada = os.path.join(directorio_entrada, archivo)
+            nombre_salida = archivo[:-4]  # Eliminar la extensión .pet
+            ruta_salida = os.path.join(directorio_salida, nombre_salida)
+            decodificarArchivo(ruta_entrada, ruta_salida)
+
+# Función principal
+def iniciador():
+    opcion = input("¿Desea codificar (C) o decodificar (D) un directorio? ").upper()
+    if opcion == 'C':
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos codificados: ")
+        codificarDirectorio(directorio_entrada, directorio_salida)
+    elif opcion == 'D':
+        directorio_entrada = input("Ingrese la ruta del directorio de entrada: ")
+        directorio_salida = input("Ingrese la ruta del directorio de salida para los archivos decodificados: ")
+        decodificarDirectorio(directorio_entrada, directorio_salida)
+    else:
+        print("Opción no válida.")
+
+# Llamada a la función principal
+iniciador()
