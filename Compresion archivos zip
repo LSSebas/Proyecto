@@ -1,0 +1,18 @@
+import zipfile
+import os
+
+def comprimirDirectorio(pDirectorioFuente, pArchivoDestino):
+    # Crear un archivo .zip en modo escritura ("w")
+    with zipfile.ZipFile(pArchivoDestino, "w", zipfile.ZIP_DEFLATED) as zipf:
+        # Recorrer el directorio y sus subdirectorios
+        for root, dirs, files in os.walk(pDirectorioFuente):
+            # Realizar la corrida con todos los archivos del directorio fuente
+            for archivo in files:
+                # Construir la ruta completa
+                rutaCompleta = os.path.join(root, archivo)
+                # Obetener la ruta dentro del ZIP
+                rutaArchivoEnZip = os.path.relpath(rutaCompleta, pDirectorioFuente)
+                # Escribir el archivo en el archivo ZIP
+                zipf.write(rutaCompleta, rutaArchivoEnZip)
+    # Devolver el archivo creado con su nombre respectivo
+    return pArchivoDestino
