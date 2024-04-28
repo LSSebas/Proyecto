@@ -1,6 +1,14 @@
 import zipfile
 import os
-
+'''
+Entradas: 
+            - pDirectorioFunte(str)
+            - pArchivoDestino(str)
+Salidas:
+            - Archivo comprimido
+Restricciones:
+            - No se validan restricciones en la funcion
+'''
 def comprimirDirectorio(pDirectorioFuente, pArchivoDestino):
     # Crear un archivo .zip en modo escritura ("w")
     with zipfile.ZipFile(pArchivoDestino, "w", zipfile.ZIP_DEFLATED) as zipf:
@@ -14,5 +22,5 @@ def comprimirDirectorio(pDirectorioFuente, pArchivoDestino):
                 rutaArchivoEnZip = os.path.relpath(rutaCompleta, pDirectorioFuente)
                 # Escribir el archivo en el archivo ZIP
                 zipf.write(rutaCompleta, rutaArchivoEnZip)
-    # Devolver el archivo creado con su nombre respectivo
+    # Devolver el archivo creado con su nombre asignado
     return pArchivoDestino
