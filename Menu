@@ -1,0 +1,66 @@
+def menu_principal():
+  """Función que muestra el menú principal y gestiona las opciones."""
+  while True:
+    print("\n--- Menú principal ---")
+    print("1. Comprimir un texto")
+    print("2. Descomprimir un texto")
+    print("3. Comprimir colección de archivos de texto")
+    print("4. Comprimir colección de archivos con API")
+    print("5. Descomprimir directorios")
+    print("6. Comprimir imagen")
+    print("7. Descomprimir imagen")
+    print("8. Salir")
+
+    opcion = input("Ingrese una opción: ")
+
+    if opcion == "1":
+      comprimir_texto()
+    elif opcion == "2":
+      descomprimir_texto()
+    elif opcion == "3":
+      comprimir_coleccion_archivos_texto()
+    elif opcion == "4":
+      comprimir_coleccion_archivos_api()
+    elif opcion == "5":
+      descomprimir_directorios()
+    elif opcion == "6":
+      comprimir_imagen()
+    elif opcion == "7":
+      descomprimir_imagen()
+    elif opcion == "8":
+      print("Saliendo del programa...")
+      break
+    else:
+      print("Opción no válida. Intente nuevamente.")
+
+def comprimir_texto():
+  # Implementar la funcionalidad para comprimir un texto
+  pass
+
+def descomprimir_texto():
+  # Implementar la funcionalidad para descomprimir un texto
+  pass
+
+def comprimir_coleccion_archivos_texto():
+  # Implementar la funcionalidad para comprimir una colección de archivos de texto
+  pass
+
+def comprimir_coleccion_archivos_api():
+  # Implementar la funcionalidad para comprimir una colección de archivos usando una API
+  pass
+
+def descomprimir_directorios():
+  # Implementar la funcionalidad para descomprimir directorios
+  pass
+
+def comprimir_imagen():
+  # Implementar la funcionalidad para comprimir una imagen
+  pass
+
+def descomprimir_imagen():
+  # Implementar la funcionalidad para descomprimir una imagen
+  pass
+
+# Llamada a la función del menú principal para iniciar el programa
+menu_principal()
+
