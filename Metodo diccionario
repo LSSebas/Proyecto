@@ -1,24 +1,27 @@
 def compresionDiccionario(pTexto):
     diccionario = {}  # Inicializamos el diccionario vacío
-    textoCodificado = []  # Lista para almacenar el texto codificado
+    textoComprimido = []  # Lista para almacenar el texto codificado
 
     for caracter in input_string:
         if caracter in diccionario:
             # Si el carácter está en el diccionario, agregamos su índice al texto codificado
-            textoCodificado.append(f"({diccionario[caracter]}, 1)")
+            textoComprimido.append(f"({diccionario[caracter]}, 1)")
         else:
             # Si no está en el diccionario, lo agregamos y emitimos el carácter sin modificar
             indice = len(diccionario)
             diccionario[caracter] = indice
-            textoCodificado.append(f"({indice}, 1)")
+            textoComprimido.append(f"({indice}, 1)")
 
     # Convertimos la lista de texto codificado en una cadena
-    encoded_string = " ".join(textoCodificado)
+    encoded_string = " ".join(textoComprimido)
     return encoded_string, diccionario
 
-def descompresionDiccionario(textoCodificado, diccionario):
+
+# Descompresion
+
+def descompresionDiccionario(textoComprimido, diccionario):
     decoded_text = ""
-    for pair_str in textoCodificado.split(" "):
+    for pair_str in textoComprimido.split(" "):
         # Extraemos el índice y la longitud de cada par
         indice_str, length_str = pair_str.strip("()").split(",")
         indice = int(indice_str)
