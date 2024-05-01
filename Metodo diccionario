@@ -2,7 +2,7 @@ def compresionDiccionario(pTexto):
     diccionario = {}  # Inicializamos el diccionario vacío
     textoComprimido = []  # Lista para almacenar el texto codificado
 
-    for caracter in input_string:
+    for caracter in pTexto:
         if caracter in diccionario:
             # Si el carácter está en el diccionario, agregamos su índice al texto codificado
             textoComprimido.append(f"({diccionario[caracter]}, 1)")
