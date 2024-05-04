@@ -1,0 +1,85 @@
+# Requerimiento 6 
+def comprimirImagen(imagen_path):
+    # Función para comprimir una imagen utilizando el algoritmo RLE
+    
+    # Leer la imagen desde el disco
+    with open(imagen_path, 'rb') as file:
+        imagen_bytes = file.read()
+    
+    # Aplicar RLE a los bytes de la imagen
+    imagenComprimida = rle_encode(imagen_bytes)
+    
+    # Escribir la imagen comprimida en un nuevo archivo con extensión .pic
+    nombreArchivo = os.path.basename(imagen_path)
+    nombreArchivoComprimido = os.path.splitext(nombreArchivo)[0] + '.pic'
+    with open(nombreArchivoComprimido, 'wb') as file:
+        file.write(imagenComprimida)
+    
+    # Agregar la extensión de la imagen original al final del archivo comprimido
+    with open(nombreArchivoComprimido, 'a') as file:
+        file.write(os.path.splitext(nombreArchivo)[1])
+
+def rle_encode(data):
+    # Función para aplicar RLE a los datos
+    
+    datosCifrados = bytearray()
+    count = 1
+    for i in range(1, len(data)):
+        if data[i] == data[i - 1]:
+            count += 1
+        else:
+            datosCifrados.append(count)
+            datosCifrados.append(data[i - 1])
+            count = 1
+    datosCifrados.append(count)
+    datosCifrados.append(data[-1])
+    
+    return bytes(datosCifrados)
+
+# Supongamos que tienes la ruta de la imagen
+imagen_path = 'imagen.bmp'
+
+# Llamar a la función para comprimir la imagen
+comprimirImagen(imagen_path)
+
+# Requerimiento 7
+
+def descomprimirImagen(archivoComprimido):
+    # Función para descomprimir una imagen codificada usando RLE
+    
+    # Leer los bytes del archivo comprimido
+    with open(archivoComprimido, 'rb') as file:
+        imagenComprimida = file.read()
+    
+    # Obtener la extensión de archivo original almacenada al final del archivo comprimido
+    with open(archivoComprimido, 'rb') as file:
+        file.seek(-4, 2)  # Posiciona el cursor al final del archivo, antes de la extensión
+        extension = file.read().decode()  # Lee y decodifica la extensión del archivo original
+    
+    # Aplicar RLE inverso para descomprimir la imagen
+    imagenDescomprimida = descifrarRle(imagenComprimida)
+    
+    # Escribir los bytes descomprimidos en un nuevo archivo con la extensión original
+    nombreArchivoDescomprimido = archivoComprimido[:-4] + extension  # Elimina la extensión .pic y agrega la original
+    with open(nombreArchivoDescomprimido, 'wb') as file:
+        file.write(imagenDescomprimida)
+
+def descifrarRle(data):
+    # Función para aplicar RLE inverso para descomprimir los datos
+    
+    dataDescifrada = bytearray()
+    indice = 0
+    while indice < len(data):
+        count = data[indice]
+        pixel = data[indice + 1]
+        dataDescifrada.extend([pixel] * count)
+        indice += 2
+    
+    return bytes(dataDescifrada)
+
+# Supongamos que tienes la ruta del archivo comprimido
+archivoComprimido = 'imagenComprimida.pic'
+
+# Llamar a la función para descomprimir la imagen
+descomprimirImagen(archivoComprimido)
+
