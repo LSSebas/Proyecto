@@ -1,0 +1,60 @@
+import os  # Importa el módulo os para interactuar con el sistema operativo
+import time  # Importa el módulo time para trabajar con fechas y horas
+import smtplib  # Importa el módulo smtplib para enviar correos electrónicos
+from email.mime.multipart import MIMEMultipart  # Importa MIMEMultipart para crear mensajes multipartes
+from email.mime.text import MIMEText  # Importa MIMEText para crear partes de texto en los mensajes de correo
+
+def generar_reporte(archivo_original, archivo_modificado, tipo_operacion):
+    # Función para generar el reporte con los datos del archivo modificado
+    nombre_archivo_original = os.path.basename(archivo_original)  # Obtiene el nombre del archivo original
+    nombre_archivo_modificado = os.path.basename(archivo_modificado)  # Obtiene el nombre del archivo modificado
+    tamano_original = os.path.getsize(archivo_original)  # Obtiene el tamaño del archivo original
+    tamano_modificado = os.path.getsize(archivo_modificado)  # Obtiene el tamaño del archivo modificado
+    tasa_compresion = (tamano_original - tamano_modificado) / tamano_original * 100  # Calcula la tasa de compresión/descompresión
+    tiempo_operacion = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # Obtiene el tiempo actual en formato de texto
+    
+    # Genera el reporte con los datos obtenidos
+    reporte = f"""
+    Reporte de Operación:
+    Nombre del Archivo Original: {nombre_archivo_original}
+    Nombre del Archivo Modificado: {nombre_archivo_modificado}
+    Tamaño Original: {tamano_original} bytes
+    Tamaño Modificado: {tamano_modificado} bytes
+    Tasa de Compresión/Descompresión: {tasa_compresion:.2f}%
+    Tiempo de Operación: {tiempo_operacion}
+    Tipo de Operación: {tipo_operacion}
+    """
+    return reporte  # Retorna el reporte generado como una cadena de texto
+
+def enviar_correo(destinatario, asunto, cuerpo):
+    # Función para enviar el correo electrónico con el reporte
+    servidor_smtp = 'smtp.example.com'  # Dirección del servidor SMTP
+    puerto_smtp = 587  # Puerto del servidor SMTP
+    usuario_smtp = 'tu_correo@example.com'  # Nombre de usuario del correo electrónico
+    contrasena_smtp = 'tu_contrasena'  # Contraseña del correo electrónico
+    
+    # Configura el mensaje de correo electrónico
+    mensaje = MIMEMultipart()
+    mensaje['From'] = usuario_smtp
+    mensaje['To'] = destinatario
+    mensaje['Subject'] = asunto
+    mensaje.attach(MIMEText(cuerpo, 'plain'))
+    
+    # Establece la conexión y envía el correo electrónico
+    with smtplib.SMTP(servidor_smtp, puerto_smtp) as servidor:
+        servidor.starttls()  # Inicia la conexión segura con el servidor SMTP
+        servidor.login(usuario_smtp, contrasena_smtp)  # Inicia sesión en el servidor SMTP
+        servidor.send_message(mensaje)  # Envía el mensaje de correo electrónico
+
+# Supongamos que tienes las variables siguientes definidas:
+archivo_original = 'archivo.txt'  # Ruta del archivo original
+archivo_modificado = 'archivo_modificado.txt'  # Ruta del archivo modificado
+tipo_operacion = 'Compresión'  # Tipo de operación (compresión o descompresión)
+destinatario = 'destinatario@example.com'  # Dirección de correo electrónico del destinatario
+asunto = 'Reporte de Operación'  # Asunto del correo electrónico
+
+# Genera el reporte
+reporte = generar_reporte(archivo_original, archivo_modificado, tipo_operacion)
+
+# Envía el correo electrónico con el reporte
+enviar_correo(destinatario, asunto, reporte)
