@@ -1,8 +1,22 @@
 def algoritmoLZW(pCadena):
+    '''
+    Entradas:
+            - pCadena (str)
+    
+    Salidas:
+            - salida (list)
+
+    Restricciones:
+            - No se válidan restricciones en la función
+    '''
+
+    # Incializar el tamaño del diccionario en 256 para almacenar el proximo caracter
     tamanoDiccionario = 256
+    # Inicializar el diccionario con caracteres ASCII
     diccionario = {chr(a): a for a in range(tamanoDiccionario)}
-    salida = []
-    indice = 0
+    salida = [] # Lista para almacenar el codigo comprimido
+    indice = 0 
+    # Cadena vacía para constuir combinaciones
     secuenciaActual = ""
     while(indice < len(pCadena)):
         caracter = pCadena[indice]
@@ -16,13 +30,26 @@ def algoritmoLZW(pCadena):
             tamanoDiccionario += 1
             secuenciaActual = caracter
         indice = indice + 1
+    # Agregar con append los codigos a la variable salida
     salida.append(diccionario[secuenciaActual])
     return salida
-    
+
 
 def descompresionAlgoritmoLZW(pComprimido):
+    '''
+    Entradas:
+            - pComprimido (list)
+
+    Salidas:
+            - Cadena de datos descomprimidos a partir de la lista de entrada
+
+    Restricciones:
+            - No se válidan restricciones en la función
+    '''
+    # Inicializar el diccionario de descompresión con caracteres ASCII estándar
     tamanoDiccionario = 256
     diccionario = {a: chr(a) for a in range(tamanoDiccionario)}
+      # Obtener el primer caracter de la secuencia comprimida y convertirlo a ASCII
     secuenciaPrevia = chr(pComprimido.pop(0))
     cadenaRespuesta = []
     cadenaRespuesta.append(secuenciaPrevia)
@@ -40,10 +67,10 @@ def descompresionAlgoritmoLZW(pComprimido):
         tamanoDiccionario = tamanoDiccionario + 1
 
         secuenciaPrevia = secuencia
-    
+    # Conviernte la lista en una cadena y lo devuelve
     return "".join(cadenaRespuesta)
 
-´´´
-Funciones utilizadas para este codigo de compresion/descompresion son: append/pop/chr/len/join
-´´´
 
+'''
+Funciones utilizadas para este codigo de compresion/descompresion son: append/pop/chr/len/join
+'''
