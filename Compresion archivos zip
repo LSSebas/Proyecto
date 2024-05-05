@@ -1,26 +1,67 @@
-import zipfile
+# Importar el módulo os para interactuar con el sistema operativo esto para el manejo de archivos
 import os
-'''
-Entradas: 
-            - pDirectorioFunte(str)
-            - pArchivoDestino(str)
-Salidas:
-            - Archivo comprimido
-Restricciones:
-            - No se validan restricciones en la funcion
-'''
-def comprimirDirectorio(pDirectorioFuente, pArchivoDestino):
-    # Crear un archivo .zip en modo escritura ("w")
-    with zipfile.ZipFile(pArchivoDestino, "w", zipfile.ZIP_DEFLATED) as zipf:
-        # Recorrer el directorio y sus subdirectorios
-        for root, dirs, files in os.walk(pDirectorioFuente):
-            # Realizar la corrida con todos los archivos del directorio fuente
-            for archivo in files:
-                # Construir la ruta completa
-                rutaCompleta = os.path.join(root, archivo)
-                # Obetener la ruta dentro del ZIP
-                rutaArchivoEnZip = os.path.relpath(rutaCompleta, pDirectorioFuente)
-                # Escribir el archivo en el archivo ZIP
-                zipf.write(rutaCompleta, rutaArchivoEnZip)
-    # Devolver el archivo creado con su nombre asignado
-    return pArchivoDestino
+
+# Importa el módulo 'zipfile', que permite trabajar con archivos ZIP en Python.
+import zipfile
+
+
+def comprimirArchivosAPI(pDirectorioFuente, pArchivoDestino, pNombreArchivoDestino, pFormato="zip"):
+    """
+    Comprime todos los archivos en el directorio especificado en un archivo ZIP.
+
+    Entradas:
+        - pDirectorioFuente (str): Ruta al directorio que contiene los archivos a comprimir.
+        - pArchivoDestino (str): Ruta al directorio donde se guardará el archivo comprimido.
+        - pNombreArchivoDestino (str): Nombre del archivo comprimido de salida (sin extensión).
+        - pFormato (str): Formato de compresión a utilizar ('zip' o 'rar'). Por defecto, 'zip'.
+
+    Salidas:
+        - Ruta del archivo comprimido generado (str)
+
+    Restricciones:
+        - No se validan restricciones en la funcion
+    """
+    # Validar el formato de compresión
+    if (pFormato != "zip"):
+        raise ValueError("El formato de compresión debe ser 'zip'.")
+
+    # Ruta completa del directorio de archivos sin comprimir
+    directorioAComprimir = os.path.join(pDirectorioFuente, "archivosSinComprimir")
+
+    # Crear el directorio de archivos sin comprimir si no existe
+    if not os.path.exists(directorioAComprimir):
+        os.makedirs(directorioAComprimir)
+        print(f"Directorio '{directorioAComprimir}' creado.")
+
+    # Crear el directorio de salida si no existe
+    if not os.path.exists(pArchivoDestino):
+        os.makedirs(pArchivoDestino)
+        print(f"Directorio '{pArchivoDestino}' creado.")
+
+    # Ruta completa del archivo comprimido de salida
+    pathSalida = os.path.join(pArchivoDestino, f"{pNombreArchivoDestino}.zip")
+
+    # Crear un archivo ZIP en la ubicación deseada
+    with zipfile.ZipFile(pathSalida, "w") as zipf:
+        # Recorrer todos los archivos en el directorio a comprimir
+        for nombreArchivo in os.listdir(directorioAComprimir):
+            pathArchivo = os.path.join(directorioAComprimir, nombreArchivo)
+            # Agregar cada archivo al archivo ZIP
+            zipf.write(pathArchivo, arcname=nombreArchivo)
+
+    return pathSalida
+
+
+# Ruta del directorio donde se encuentran los archivos de texto sin comprimir
+pathDirectorio = os.path.dirname(os.path.abspath(__file__))  # Ruta del directorio actual del script
+
+# Ruta del directorio donde se guardará el archivo comprimido
+directorioSalida = os.path.join(pathDirectorio, "archivosComprimidos")
+
+# Nombre de archivo comprimido de salida (sin extensión)
+nombreDirectorioSalida = "archivosComprimidos"
+
+# Comprimir los archivos en formato ZIP
+archivoComprimidoZIP = comprimirArchivosAPI(pathDirectorio, directorioSalida, nombreDirectorioSalida, pFormato="zip")
+print(f"Archivo ZIP comprimido generado: {archivoComprimidoZIP}")
+
