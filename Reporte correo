@@ -28,7 +28,7 @@ def generar_reporte(archivo_original, archivo_modificado, tipo_operacion):
 
 def enviar_correo(destinatario, asunto, cuerpo):
     # Función para enviar el correo electrónico con el reporte
-    servidor_smtp = 'smtp.example.com'  # Dirección del servidor SMTP
+    servidor_smtp = 'smtp.gmail.com'  # Dirección del servidor SMTP
     puerto_smtp = 587  # Puerto del servidor SMTP
     usuario_smtp = 'tu_correo@example.com'  # Nombre de usuario del correo electrónico
     contrasena_smtp = 'tu_contrasena'  # Contraseña del correo electrónico
