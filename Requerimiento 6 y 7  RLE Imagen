@@ -42,8 +42,6 @@ imagen_path = 'imagen.bmp'
 # Llamar a la función para comprimir la imagen
 comprimirImagen(imagen_path)
 
-# Requerimiento 7
-
 def descomprimirImagen(archivoComprimido):
     # Función para descomprimir una imagen codificada usando RLE
     
@@ -70,16 +68,19 @@ def descifrarRle(data):
     dataDescifrada = bytearray()
     indice = 0
     while indice < len(data):
-        count = data[indice]
-        pixel = data[indice + 1]
-        dataDescifrada.extend([pixel] * count)
-        indice += 2
+        try:
+            count = data[indice]
+            pixel = data[indice + 1]
+            dataDescifrada.extend([pixel] * count)
+            indice += 2
+        except IndexError:
+            break
     
     return bytes(dataDescifrada)
 
+
 # Supongamos que tienes la ruta del archivo comprimido
-archivoComprimido = 'imagenComprimida.pic'
+archivoComprimido = 'imagen.pic'
 
 # Llamar a la función para descomprimir la imagen
 descomprimirImagen(archivoComprimido)
-
